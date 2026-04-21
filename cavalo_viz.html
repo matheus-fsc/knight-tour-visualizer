@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Cavalo 8×8 — Explorador</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+<!-- Col 1: tabuleiro -->
+<div id="board-col">
+  <div id="controls">
+    <div id="speed-wrap">
+      <span>Vel</span>
+      <input type="range" id="speed" min="1" max="100" value="35">
+    </div>
+  </div>
+  <canvas id="canvas" width="560" height="560"></canvas>
+  <div id="board-note" class="board-note"></div>
+</div>
+
+<!-- Col 2: painel de informações do modo -->
+<div id="info-col">
+  <section id="global-stats">
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">V</span><span id="s-v" class="gs-val">—</span></div>
+      <div class="gs-item"><span class="gs-label">E</span><span id="s-e" class="gs-val">—</span></div>
+      <div class="gs-item"><span class="gs-label">H¹</span><span id="s-h" class="gs-val">—</span></div>
+    </div>
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">Obrig.</span><span id="s-mand" class="gs-val gold">—</span></div>
+      <div class="gs-item"><span class="gs-label">Impos.</span><span id="s-forb" class="gs-val red">—</span></div>
+    </div>
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">Det.</span><span id="s-det" class="gs-val">—</span></div>
+      <div class="gs-item"><span class="gs-label">Livres</span><span id="s-livres" class="gs-val blue">—</span></div>
+    </div>
+  </section>
+
+  <div class="mode-meta">
+    <span class="meta-label">Progresso</span>
+    <span class="stat-value" id="s-p">—</span>
+    <span class="meta-sep">·</span>
+    <span class="meta-label">Ativo</span>
+    <span class="stat-value" id="s-active">—</span>
+  </div>
+
+  <div id="mode-panel"></div>
+</div>
+
+<!-- Col 3: árvore de loops (só Simetria) -->
+<div id="tree-col">
+  <div class="tree-col-header">Árvore de Loops</div>
+  <div id="tree-controls">
+    <button id="btn-tree-next">Próximo ▶</button>
+    <button id="btn-tree-reset">Reset</button>
+    <button id="btn-tree-auto">Auto ▶▶</button>
+    <div id="counter">
+      <b id="c-tested">0</b>/<span id="c-total">0</span>
+      &nbsp;·&nbsp;<b id="c-sat">0</b> satisfazem
+    </div>
+  </div>
+  <canvas id="tree-canvas" width="420" height="460"></canvas>
+  <div id="tree-note" class="tree-note">
+    Clique num loop para destacar suas arestas no tabuleiro.
+  </div>
+</div>
+
+<div id="hover-tooltip"></div>
+<script type="module" src="./js/app.js"></script>
+
+</body>
+</html>
