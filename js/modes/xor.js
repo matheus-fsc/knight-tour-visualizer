@@ -5,6 +5,7 @@ const state = {
   animId: null,
   animCursor: -1,
   playing: false,
+  showStats: false,
 };
 
 export default {
@@ -34,7 +35,51 @@ export default {
     state.playing = false;
   },
 
-  // Atualiza um item da lista em-lugar (sem recriar o DOM → scroll preservado)
+  // Computa estatísticas do grafo resultante do XOR atual
+  _computeStats(edgeCounts) {
+    const activeEdges = Object.entries(edgeCounts).filter(([, c]) => c % 2 === 1);
+    const deg = {};
+    for (const [key] of activeEdges) {
+      const pts = key.split('|');
+      deg[pts[0]] = (deg[pts[0]] || 0) + 1;
+      deg[pts[1]] = (deg[pts[1]] || 0) + 1;
+    }
+    const degVals = Object.values(deg);
+    const maxDeg = degVals.length ? Math.max(...degVals) : 0;
+    const isolated = 64 - Object.keys(deg).length;
+
+    // Conta componentes conectadas
+    const adj = {};
+    for (const [key] of activeEdges) {
+      const [a, b] = key.split('|');
+      (adj[a] = adj[a] || []).push(b);
+      (adj[b] = adj[b] || []).push(a);
+    }
+    const visited = new Set();
+    let components = 0;
+    for (const n of Object.keys(adj)) {
+      if (!visited.has(n)) {
+        components++;
+        const q = [n];
+        visited.add(n);
+        while (q.length) {
+          const cur = q.pop();
+          for (const nb of (adj[cur] || [])) {
+            if (!visited.has(nb)) { visited.add(nb); q.push(nb); }
+          }
+        }
+      }
+    }
+
+    return {
+      edges: activeEdges.length,
+      maxDeg,
+      isolated,
+      components: activeEdges.length === 0 ? 0 : components,
+    };
+  },
+
+  // Atualiza item da lista em-lugar (scroll preservado)
   _applyToggle(app, id) {
     if (state.active.has(id)) state.active.delete(id);
     else state.active.add(id);
@@ -92,6 +137,42 @@ export default {
     }
   },
 
+  _renderStats(edgeCounts) {
+    const el = document.getElementById('xor-stats');
+    if (!el) return;
+    if (!state.showStats) { el.style.display = 'none'; return; }
+
+    const s = this._computeStats(edgeCounts);
+    const V = 64;
+
+    // Metas: edges=64, maxDeg=2, isolated=0, components=1
+    const ok  = (v, t) => v === t;
+    const col = (v, t) => ok(v, t) ? '#5ad06b' : (v < t ? '#e0b840' : '#cc5050');
+
+    const row = (label, val, target, unit = '') => `
+      <div class="stat" style="padding:4px 0">
+        <span class="stat-label">${label}</span>
+        <span style="font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;
+                     color:${col(val, target)}">
+          ${val}${unit}
+          <span style="color:#444458;font-weight:400;font-size:10px"> / ${target}</span>
+        </span>
+      </div>`;
+
+    el.style.display = 'block';
+    el.innerHTML =
+      row('Arestas ativas', s.edges, V) +
+      row('Grau máximo', s.maxDeg, 2) +
+      row('Nós isolados', s.isolated, 0) +
+      row('Componentes', s.components, 1) +
+      (s.edges === V && s.maxDeg === 2 && s.isolated === 0 && s.components === 1
+        ? `<div style="margin-top:6px;padding:6px 8px;background:#1a2e1a;border:1px solid #2e5a2e;
+                       border-radius:4px;color:#5ad06b;font-size:11px;font-weight:600;text-align:center">
+             ✓ Passeio completo do cavalo!
+           </div>`
+        : '');
+  },
+
   render(app) {
     const { board, DATA, LOOP_EDGES } = app;
     const { ctx } = board;
@@ -118,6 +199,8 @@ export default {
         ctx.stroke();
       }
     }
+
+    this._renderStats(edgeCounts);
   },
 
   renderPanel(app) {
@@ -133,8 +216,6 @@ export default {
     });
     list += '</div>';
 
-    const isPlaying = state.playing;
-
     document.getElementById('mode-panel').innerHTML = `
       <h2>Espaço de Ciclos GF(2)</h2>
       <div class="panel-intro">
@@ -144,14 +225,23 @@ export default {
       <div style="display:flex; gap:5px; margin: 8px 0; flex-wrap:wrap;">
         <button id="btn-xor-clear">Limpar</button>
         <button id="btn-xor-all">Sel. Todos</button>
-        <button id="btn-xor-play">${isPlaying ? '⏸ Parar' : '▶ Animar'}</button>
+        <button id="btn-xor-play">${state.playing ? '⏸ Parar' : '▶ Animar'}</button>
+        <button id="btn-xor-stats" style="${state.showStats ? 'background:#1c2c1c;border-color:#3a6a3a;color:#5ad06b' : ''}">
+          ${state.showStats ? '📊 Ocultar stats' : '📊 Ver stats'}
+        </button>
       </div>
+      <div id="xor-stats" style="display:none; background:#111119; border:1px solid #1e1e2c;
+           border-radius:4px; padding:8px 10px; margin-bottom:6px;"></div>
       ${list}
     `;
 
     document.querySelectorAll('.item[data-xor]').forEach((el) => {
       el.onclick = () => {
-        if (state.playing) { this._stopAnim(); document.getElementById('btn-xor-play').textContent = '▶ Animar'; }
+        if (state.playing) {
+          this._stopAnim();
+          const b = document.getElementById('btn-xor-play');
+          if (b) b.textContent = '▶ Animar';
+        }
         this._applyToggle(app, +el.dataset.xor);
       };
     });
@@ -177,5 +267,20 @@ export default {
     };
 
     document.getElementById('btn-xor-play').onclick = () => this._togglePlay(app);
+
+    document.getElementById('btn-xor-stats').onclick = () => {
+      state.showStats = !state.showStats;
+      const btn = document.getElementById('btn-xor-stats');
+      if (btn) {
+        btn.textContent = state.showStats ? '📊 Ocultar stats' : '📊 Ver stats';
+        btn.style.background = state.showStats ? '#1c2c1c' : '';
+        btn.style.borderColor = state.showStats ? '#3a6a3a' : '';
+        btn.style.color = state.showStats ? '#5ad06b' : '';
+      }
+      this.render(app);
+    };
+
+    // Renderiza stats se já estiver ativo
+    this.render(app);
   },
 };
