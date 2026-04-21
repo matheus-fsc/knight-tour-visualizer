@@ -4,6 +4,7 @@ const state = {
   idx: 0,
   anim: 0,
   rafId: null,
+  paused: false,
 };
 
 export default {
@@ -24,6 +25,7 @@ export default {
   onEnter(app) {
     state.idx = 0;
     state.anim = 0;
+    state.paused = false;
     this.renderPanel(app);
     this.tick(app);
   },
@@ -58,16 +60,35 @@ export default {
   },
 
   tick(app) {
-    state.anim += app.speed() / 4500;
-    if (state.anim >= 1.35) {
-      state.anim = 0;
-      state.idx = (state.idx + 1) % app.DATA.loops.length;
-      this.renderPanel(app);
+    if (!state.paused) {
+      state.anim += app.speed() / 4500;
+      if (state.anim >= 1.35) {
+        state.anim = 0;
+        state.idx = (state.idx + 1) % app.DATA.loops.length;
+        this._updatePanel(app);
+      }
     }
     this.render(app);
     if (app.currentMode === this) {
       state.rafId = requestAnimationFrame(() => this.tick(app));
     }
+  },
+
+  // Atualiza apenas as partes dinâmicas do painel sem recriar o botão
+  _updatePanel(app) {
+    const { DATA } = app;
+    document.getElementById('s-p').textContent =
+      `${state.idx + 1}/${DATA.loops.length}`;
+    document.getElementById('s-active').textContent = `#${state.idx + 1}`;
+    const loop = DATA.loops[state.idx] || {};
+    const coll = loop.colisao
+      ? `(${loop.colisao[0][0]},${loop.colisao[0][1]}) ↔ ` +
+        `(${loop.colisao[1][0]},${loop.colisao[1][1]})`
+      : '—';
+    const sz = document.getElementById('lp-size');
+    const cl = document.getElementById('lp-coll');
+    if (sz) sz.textContent = `${loop.tamanho_ciclo || '—'} passos`;
+    if (cl) cl.textContent = coll;
   },
 
   renderPanel(app) {
@@ -84,11 +105,18 @@ export default {
       <h2>Loop atual</h2>
       <div class="stat">
         <span class="stat-label">Tamanho do ciclo</span>
-        <span class="stat-value">${loop.tamanho_ciclo || '—'} passos</span>
+        <span class="stat-value" id="lp-size">${loop.tamanho_ciclo || '—'} passos</span>
       </div>
       <div class="stat">
         <span class="stat-label">Colisão</span>
-        <span class="stat-value">${coll}</span>
+        <span class="stat-value" id="lp-coll">${coll}</span>
+      </div>
+      <div style="display:flex; gap:5px; margin: 10px 0;">
+        <button id="btn-lp-pp" style="flex:1">
+          ${state.paused ? '▶ Play' : '⏸ Pausar'}
+        </button>
+        <button id="btn-lp-prev">◀ Anterior</button>
+        <button id="btn-lp-next">Próximo ▶</button>
       </div>
       <div class="panel-intro">
         Cada aresta fora da árvore geradora (veja o modo "Árvore") fecha
@@ -96,5 +124,20 @@ export default {
         (as 105 arestas extras).
       </div>
     `;
+    document.getElementById('btn-lp-pp').onclick = () => {
+      state.paused = !state.paused;
+      const b = document.getElementById('btn-lp-pp');
+      if (b) b.textContent = state.paused ? '▶ Play' : '⏸ Pausar';
+    };
+    document.getElementById('btn-lp-prev').onclick = () => {
+      state.anim = 0;
+      state.idx = (state.idx - 1 + app.DATA.loops.length) % app.DATA.loops.length;
+      this._updatePanel(app);
+    };
+    document.getElementById('btn-lp-next').onclick = () => {
+      state.anim = 0;
+      state.idx = (state.idx + 1) % app.DATA.loops.length;
+      this._updatePanel(app);
+    };
   },
 };

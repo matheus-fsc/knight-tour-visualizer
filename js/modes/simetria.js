@@ -5,16 +5,19 @@ export default {
   key: 'simetria',
   label: 'Simetria',
   note: `
-    <b>Quais arestas têm destino certo?</b> Algumas arestas aparecem em
-    <b>100% dos passeios possíveis</b> — são as <span style="color:#ffd66b">
-    <b>obrigatórias</b></span> (nos cantos, porque o cavalo só tem 2 saídas
-    de lá, então ambas têm que ser usadas).
+    <b>Tabuleiro — arestas por frequência:</b>
+    <span style="color:#ffd66b"><b>obrigatórias</b></span> (aparecem em 100% dos
+    passeios; saem dos 4 cantos, onde o cavalo tem grau 2).
+    <span style="color:#c84646"><b>Impossíveis</b></span> (tracejado vermelho —
+    nunca aparecem). Arestas <b>livres</b> ficam quase invisíveis (cinza).
+    Cores distintas nas obrigatórias agrupam órbitas do grupo D₄
+    (rotações 90°/180°/270° e reflexões do tabuleiro).
     <br><br>
-    As <span style="color:#c84646"><b>impossíveis</b></span> (tracejado
-    vermelho) nunca aparecem em um passeio. As <span style="color:#6e6e80">
-    <b>livres</b></span> (cinza) podem ou não ser usadas.
-    Cores distintas agrupam arestas <b>equivalentes por simetria</b>
-    (rotações 90°/180°/270° e reflexões H/V/diagonal do tabuleiro).
+    <b>Árvore de loops (painel direito):</b>
+    <span style="color:#ffd66b">●</span> <b>Determinados</b> (amarelo) — loops
+    que contêm ao menos uma aresta obrigatória; seu estado é forçado.
+    <span style="color:#66c8ff">●</span> <b>Livres</b> (azul) — loops sem
+    interseção com arestas obrigatórias; podem ou não estar ativos.
   `,
 
   onEnter(app) {
@@ -27,7 +30,7 @@ export default {
     const { ctx } = board;
     board.drawBoard();
 
-    // 1. Arestas livres em cinza
+    // 1. Arestas livres em cinza muito tênue
     for (const [a, b] of DATA.arestas) {
       const k = app.keyOf(a, b);
       if (mandSet.has(k) || forbSet.has(k)) continue;
@@ -94,12 +97,20 @@ export default {
 
     document.getElementById('mode-panel').innerHTML = `
       <h2>Legenda do tabuleiro</h2>
-      <div class="panel-intro">
+      <div class="panel-intro" style="line-height:1.8">
         <span style="color:#ffd66b">━</span> obrigatória &nbsp;·&nbsp;
         <span style="color:#c84646">╍</span> impossível &nbsp;·&nbsp;
-        <span style="color:#6e6e80">━</span> livre
+        <span style="color:#555570">━</span> livre (tênue)
       </div>
-      <h2>Órbitas (grupo D₄)</h2>
+      <h2>Legenda da árvore de loops</h2>
+      <div class="panel-intro" style="line-height:1.8">
+        <span style="color:#ffd66b">●</span> <b>determinado</b> (amarelo) &nbsp;·&nbsp;
+        <span style="color:#66c8ff">●</span> <b>livre</b> (azul)
+        <br>
+        <span style="color:#5ad06b">●</span> satisfaz &nbsp;·&nbsp;
+        <span style="color:#4a6a9a">●</span> testado / não satisfaz
+      </div>
+      <h2>Órbitas do grupo D₄</h2>
       ${orbitHtml}
       <h2>Teste passo a passo</h2>
       <div class="panel-intro">

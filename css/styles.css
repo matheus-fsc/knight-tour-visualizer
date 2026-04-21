@@ -1,10 +1,16 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  background: #0b0b12;
+  min-height: 100vh;
+}
+
 body {
   background: #0b0b12;
   color: #dcdce4;
   font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
   display: flex;
+  width: fit-content;
   min-height: 100vh;
   align-items: stretch;
 }
