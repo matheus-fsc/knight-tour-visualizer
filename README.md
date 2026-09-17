@@ -1,33 +1,63 @@
 # knight-tour-visualizer
 
-Projeto de estudo e visualização do **grafo do passeio do cavalo** com foco em estrutura combinatória, ciclos fundamentais e simetrias do tabuleiro.
+Frontend estático para inspecionar visualmente o **grafo do passeio do cavalo**:
+a árvore geradora BFS, os ciclos fundamentais, as órbitas do grupo diedral D4 e
+o XOR de ciclos sobre GF(2).
 
-## Contexto
+> Este repositório é a **parte visual** de um projeto maior. A pesquisa — o
+> invariante de deficit `Q(n)=3`, a formalização em Lean 4, os solvers e os
+> experimentos — está em **[KnightMove](https://github.com/matheus-fsc/KnightMove)**,
+> com a documentação completa na
+> **[wiki](https://github.com/matheus-fsc/KnightMove/wiki)**.
 
-O repositório combina:
+## Rodando
 
-- geração de dados matemáticos em Python para tabuleiros de cavalo;
-- análise de ciclos e assinaturas booleanas;
-- frontend estático para inspeção visual dos resultados.
+Não precisa de build nem de servidor — é HTML estático:
 
-O núcleo do projeto modela o tabuleiro como grafo, calcula uma árvore geradora por BFS e usa as arestas fora da árvore para representar ciclos fundamentais (base de \(H^1\)).
+```bash
+xdg-open index.html      # ou cavalo_viz.html
+```
 
-## Estrutura conceitual
+## Modos do visualizador
 
-- `cavalo_engine.py`: gera `cavalo_data.json` com descrição do grafo 8x8, arestas, loops fundamentais, classificação por simetria e solução hamiltoniana heurística.
-- `knight_8x8_allsat_async.py`, `dfs_knight_xorSearch.py`, `test_6x6_z3.py`: scripts de busca/validação e enumeração.
-- `assinaturas_6x6.json`: base de assinaturas booleanas para análise estatística/topológica no caso 6x6.
-- `cavalo_viz.html` + `js/` + `css/`: visualizador principal do 8x8.
-- `unicornios_viz.html`: visualização das caudas da distribuição de assinaturas.
+| modo | o que mostra |
+|---|---|
+| Grafo | o grafo do cavalo 8×8: 64 vértices, 168 arestas |
+| Árvore | a árvore geradora por BFS a partir de (0,0) |
+| Loops | os **105 ciclos fundamentais**, animados um a um. Cada um aparece como dois caminhos (laranja e azul) que se encontram na aresta amarela que fecha o ciclo |
+| XOR | combinação de ciclos sobre GF(2): a diferença simétrica de dois tours é sempre um elemento do espaço de ciclos |
+| Simetria | as órbitas de arestas sob o grupo diedral D4 |
+| Hierarquia | classificação dos loops em determinados e livres |
+| Solução | um tour hamiltoniano |
 
-## Resultados trabalhados no projeto
+O modo **Loops** é o mais relevante historicamente: foi notando que caminhos da
+árvore de recursão colidem que o projeto chegou ao espaço de ciclos. A
+[página de teoria](https://github.com/matheus-fsc/KnightMove/wiki/Teoria-GF2)
+explica a conexão.
 
-- Grafo do cavalo em 8x8 com 64 vértices e 168 arestas.
-- Decomposição por árvore geradora BFS e ciclos fundamentais.
-- Classificação de loops em conjuntos determinados/livres por restrições estruturais.
-- Exploração de órbitas de arestas sob simetrias do grupo \(D_4\).
-- Análise de distribuição de pesos booleanos no universo 6x6.
+## Estrutura
 
-## Objetivo
+| caminho | conteúdo |
+|---|---|
+| `index.html`, `cavalo_viz.html` | visualizador principal do 8×8 |
+| `unicornios_viz.html` | caudas da distribuição de assinaturas |
+| `js/`, `css/` | lógica (um arquivo por modo em `js/modes/`) e estilos |
+| `cavalo_data.json` | dados do grafo, gerado por `cavalo_engine.py` |
+| `assinaturas_6x6.json` | assinaturas booleanas do 6×6, gerado por `test_6x6_z3.py` |
 
-Servir como laboratório visual e computacional para investigar propriedades globais do passeio do cavalo, conectando **busca combinatória**, **simetria** e **interpretação topológica** em uma interface navegável.
+### Regenerando os dados
+
+```bash
+python cavalo_engine.py     # -> cavalo_data.json  (grafo, loops, orbitas D4, tour)
+python test_6x6_z3.py       # -> assinaturas_6x6.json
+python plot_curva.py        # -> curva_pesos_assinaturas.png
+python plot_heatmap.py      # -> heatmap_correlacao.png
+```
+
+## O que saiu daqui
+
+Os scripts de busca puramente de pesquisa (`knight_8x8_allsat_async.py`,
+`dfs_knight_xorSearch.py`, `cavalo_engine_z3`) foram movidos para
+[KnightMove](https://github.com/matheus-fsc/KnightMove), em
+`experiments/05_solvers_xor/`, onde ficam junto do resto do trabalho com Z3 e
+cláusulas XOR. Permanecem no histórico deste repositório.
