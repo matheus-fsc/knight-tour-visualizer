@@ -1,7 +1,9 @@
 // Renderização do tabuleiro com primitivas reutilizáveis.
 import { degreeColor } from './core.js';
 
-export function createBoard(canvas, boardSize, margin = 32) {
+export function createBoard(canvas, boardSize, margin = 32, opts = {}) {
+  // graus: usado para marcar os vertices de grau 2 (os cantos que geram Q=3)
+  const graus = opts.graus || null;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   const CELL = (W - 2 * margin) / boardSize;
@@ -30,6 +32,22 @@ export function createBoard(canvas, boardSize, margin = 32) {
         ctx.fillStyle = ((x + y) % 2 === 0) ? '#1c1c28' : '#16161f';
         ctx.fillRect(px - CELL / 2, py - CELL / 2, CELL, CELL);
       }
+    }
+    // Casas de grau 2: suas duas arestas sao obrigatorias em todo tour.
+    // Sao elas que produzem o deficit Q = 3 (ver wiki: Invariante-Q).
+    if (graus) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 196, 92, 0.55)';
+      ctx.setLineDash([3, 3]);
+      ctx.lineWidth = 1.5;
+      for (let x = 0; x < boardSize; x++) {
+        for (let y = 0; y < boardSize; y++) {
+          if (graus[x][y] !== 2) continue;
+          const [px, py] = cellToPx(x, y);
+          ctx.strokeRect(px - CELL / 2 + 2, py - CELL / 2 + 2, CELL - 4, CELL - 4);
+        }
+      }
+      ctx.restore();
     }
     ctx.fillStyle = '#4c4c5c';
     ctx.font = '10px system-ui';

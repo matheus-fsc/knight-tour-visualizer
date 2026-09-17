@@ -46,6 +46,20 @@ const MODES = [grafo, loops, solucao, arvore, hierarquia, xor, simetria];
   document.getElementById('s-forb').textContent = SIM.arestas_impossiveis.length;
   document.getElementById('s-livres').textContent = SIM.loops_livres.length;
   document.getElementById('s-det').textContent = SIM.loops_determinados.length;
+
+  // Deficit Q: cada casa de grau 2 forca suas duas arestas em todo tour, o que
+  // corta uma dimensao do espaco de ciclos. As quatro restricoes dos cantos
+  // colapsam para tres pelo nucleo do funcional soma, logo Q = k_deg2 - 1.
+  // Consequencia: os tours geram apenas beta_1 - Q do espaco de ciclos.
+  let kDeg2 = 0;
+  for (let x = 0; x < boardSize; x++)
+    for (let y = 0; y < boardSize; y++)
+      if (DATA.descricao.graus[x][y] === 2) kDeg2++;
+  const Q = Math.max(0, kDeg2 - 1);
+  document.getElementById('s-q').textContent = Q;
+  document.getElementById('s-rank').textContent = DATA.descricao.H1 - Q;
+  document.getElementById('s-q').title =
+    `${kDeg2} casas de grau 2 (marcadas no tabuleiro) => Q = ${kDeg2} - 1 = ${Q}`;
   document.getElementById('c-total').textContent = SIM.loops_livres.length;
 
   // índices de arestas
@@ -59,7 +73,7 @@ const MODES = [grafo, loops, solucao, arvore, hierarquia, xor, simetria];
 
   // board e loop-tree
   const canvas = document.getElementById('canvas');
-  const board = createBoard(canvas, boardSize, 32);
+  const board = createBoard(canvas, boardSize, 32, { graus: DATA.descricao.graus });
   const treeCanvas = document.getElementById('tree-canvas');
   const loopTree = createLoopTree(treeCanvas, DATA, SIM);
 

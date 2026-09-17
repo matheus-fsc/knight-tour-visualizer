@@ -401,3 +401,30 @@ button.active {
   font-family: ui-monospace, monospace;
   font-size: 12px;
 }
+
+/* ── Nota de contexto sob o tabuleiro ───────────────────────── */
+
+#ctx-note {
+  max-width: 560px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #7c7c92;
+  border-top: 1px solid #1c1c28;
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+#ctx-note b { color: #a9a9bd; font-weight: 600; }
+
+#ctx-note a {
+  color: #d8a852;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(216, 168, 82, 0.3);
+}
+
+#ctx-note a:hover {
+  color: #f0bf67;
+  border-bottom-color: rgba(240, 191, 103, 0.6);
+}
+
+#ctx-note .sep { color: #3a3a4a; margin: 0 4px; }

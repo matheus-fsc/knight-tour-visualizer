@@ -1,63 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Knight Tour Visualizações</title>
-  <style>
-    :root { color-scheme: dark; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: #0b0f16;
-      color: #e7edf7;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-    }
-    .card {
-      width: min(760px, 92vw);
-      background: #131b27;
-      border: 1px solid #1f2b3d;
-      border-radius: 12px;
-      padding: 24px;
-    }
-    h1 { margin: 0 0 8px; font-size: 1.45rem; }
-    p { margin: 0 0 16px; color: #9fb0c7; line-height: 1.5; }
-    .links {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    a {
-      text-decoration: none;
-      color: #0b0f16;
-      background: #9ad0ff;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-weight: 600;
-    }
-    a:hover { filter: brightness(1.06); }
-    code {
-      background: #1a2536;
-      color: #b8d7ff;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-  </style>
+  <meta charset="utf-8">
+  <title>Cavalo 8×8 — Explorador</title>
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-  <main class="card">
-    <h1>Knight Tour · Frontend</h1>
-    <p>
-      Visualizações já alimentadas por JSON local
-      (<code>cavalo_data.json</code> e <code>assinaturas_6x6.json</code>),
-      prontas para deploy estático.
-    </p>
-    <div class="links">
-      <a href="./cavalo_viz.html">Abrir visualização do cavalo (8x8)</a>
-      <a href="./unicornios_viz.html">Abrir visualização de unicórnios (6x6)</a>
+
+<!-- Col 1: tabuleiro -->
+<div id="board-col">
+  <div id="controls">
+    <div id="speed-wrap">
+      <span>Vel</span>
+      <input type="range" id="speed" min="1" max="100" value="35">
     </div>
-  </main>
+  </div>
+  <canvas id="canvas" width="560" height="560"></canvas>
+  <div id="board-note" class="board-note"></div>
+  <footer id="ctx-note">
+    As casas contornadas em amarelo têm <b>grau 2</b>: suas duas arestas são
+    obrigatórias em todo tour. São elas que produzem o deficit
+    <b>Q&nbsp;=&nbsp;3</b>, e por isso os tours geram apenas
+    <b>rank&nbsp;=&nbsp;&beta;<sub>1</sub>&nbsp;&minus;&nbsp;3</b> do espaço de ciclos.
+    <a href="https://github.com/matheus-fsc/KnightMove/wiki/Invariante-Q" target="_blank" rel="noopener">Entenda o invariante Q</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/matheus-fsc/KnightMove/wiki/Teoria-GF2" target="_blank" rel="noopener">Teoria GF(2)</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/matheus-fsc/KnightMove" target="_blank" rel="noopener">Código e pesquisa</a>
+  </footer>
+</div>
+
+<!-- Col 2: painel de informações do modo -->
+<div id="info-col">
+  <section id="global-stats">
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">V</span><span id="s-v" class="gs-val">—</span></div>
+      <div class="gs-item"><span class="gs-label">E</span><span id="s-e" class="gs-val">—</span></div>
+      <div class="gs-item"><span class="gs-label">H¹</span><span id="s-h" class="gs-val">—</span></div>
+    </div>
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">Obrig.</span><span id="s-mand" class="gs-val gold">—</span></div>
+      <div class="gs-item"><span class="gs-label">Impos.</span><span id="s-forb" class="gs-val red">—</span></div>
+    </div>
+    <div class="gs-row">
+      <div class="gs-item"><span class="gs-label">Det.</span><span id="s-det" class="gs-val">&mdash;</span></div>
+      <div class="gs-item"><span class="gs-label">Livres</span><span id="s-livres" class="gs-val blue">&mdash;</span></div>
+    </div>
+    <div class="gs-row">
+      <div class="gs-item" title="Deficit: dimensoes do espaco de ciclos que os tours nao alcancam">
+        <span class="gs-label">Q</span><span id="s-q" class="gs-val gold">&mdash;</span>
+      </div>
+      <div class="gs-item" title="Dimensao do espaco gerado pelos tours: beta_1 menos Q">
+        <span class="gs-label">rank</span><span id="s-rank" class="gs-val">&mdash;</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="mode-meta">
+    <span class="meta-label">Progresso</span>
+    <span class="stat-value" id="s-p">—</span>
+    <span class="meta-sep">·</span>
+    <span class="meta-label">Ativo</span>
+    <span class="stat-value" id="s-active">—</span>
+  </div>
+
+  <div id="mode-panel"></div>
+</div>
+
+<!-- Col 3: árvore de loops (só Simetria) -->
+<div id="tree-col">
+  <div class="tree-col-header">Árvore de Loops</div>
+  <div id="tree-controls">
+    <button id="btn-tree-next">Próximo ▶</button>
+    <button id="btn-tree-reset">Reset</button>
+    <button id="btn-tree-auto">Auto ▶▶</button>
+    <div id="counter">
+      <b id="c-tested">0</b>/<span id="c-total">0</span>
+      &nbsp;·&nbsp;<b id="c-sat">0</b> satisfazem
+    </div>
+  </div>
+  <canvas id="tree-canvas" width="420" height="460"></canvas>
+  <div id="tree-note" class="tree-note">
+    Clique num loop para destacar suas arestas no tabuleiro.
+  </div>
+</div>
+
+<div id="hover-tooltip"></div>
+<script type="module" src="./js/app.js"></script>
+
 </body>
 </html>
