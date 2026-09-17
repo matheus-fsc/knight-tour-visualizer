@@ -20,7 +20,7 @@ const MODES = [grafo, loops, solucao, arvore, hierarquia, xor, simetria];
     document.body.innerHTML =
       `<div id="error">
         Não consegui carregar <code>cavalo_data.json</code> corretamente.<br><br>
-        ${!DATA ? 'Fetch falhou (verifique o servidor HTTP).' : 'JSON carregado mas campo <code>arestas</code> ausente — JSON pode estar corrompido ou desatualizado.'}
+        ${!DATA ? 'Fetch falhou (verifique o servidor HTTP).' : 'JSON carregado mas campo <code>arestas</code> ausente. O JSON pode estar corrompido ou desatualizado.'}
         <br><br>Rode <code>python3 cavalo_engine.py</code> e sirva por HTTP
         (<code>python3 -m http.server</code>).
         Verifique o console para mais detalhes.

@@ -1,22 +1,22 @@
-// Modo "Simetria" — arestas obrigatórias (por órbita), impossíveis e livres.
+// Modo "Simetria": arestas obrigatórias (por órbita), impossíveis e livres.
 import { orbitColor } from '../core.js';
 
 export default {
   key: 'simetria',
   label: 'Simetria',
   note: `
-    <b>Tabuleiro — arestas por frequência:</b>
+    <b>Tabuleiro, arestas por frequência:</b>
     <span style="color:#ffd66b"><b>obrigatórias</b></span> (aparecem em 100% dos
     passeios; saem dos 4 cantos, onde o cavalo tem grau 2).
-    <span style="color:#c84646"><b>Impossíveis</b></span> (tracejado vermelho —
+    <span style="color:#c84646"><b>Impossíveis</b></span> (tracejado vermelho,
     nunca aparecem). Arestas <b>livres</b> ficam quase invisíveis (cinza).
     Cores distintas nas obrigatórias agrupam órbitas do grupo D₄
     (rotações 90°/180°/270° e reflexões do tabuleiro).
     <br><br>
     <b>Árvore de loops (painel direito):</b>
-    <span style="color:#ffd66b">●</span> <b>Determinados</b> (amarelo) — loops
+    <span style="color:#ffd66b">●</span> <b>Determinados</b> (amarelo): loops
     que contêm ao menos uma aresta obrigatória; seu estado é forçado.
-    <span style="color:#66c8ff">●</span> <b>Livres</b> (azul) — loops sem
+    <span style="color:#66c8ff">●</span> <b>Livres</b> (azul): loops sem
     interseção com arestas obrigatórias; podem ou não estar ativos.
   `,
 
@@ -70,14 +70,14 @@ export default {
     document.getElementById('s-p').textContent =
       `${state.freeLoopCursor + 1}/${SIM.loops_livres.length}`;
     document.getElementById('s-active').textContent =
-      state.highlightedLoop !== null ? `#${state.highlightedLoop + 1}` : '—';
+      state.highlightedLoop !== null ? `#${state.highlightedLoop + 1}` : '-';
 
     let orbitHtml = '';
     SIM.orbitas.forEach((orb, i) => {
       orbitHtml += `
         <div class="item" style="border-left: 3px solid ${orbitColor(i)};">
           <span class="orbit-chip" style="background:${orbitColor(i)}"></span>
-          Órbita ${i + 1} — ${orb.length} aresta${orb.length === 1 ? '' : 's'}
+          Órbita ${i + 1}: ${orb.length} aresta${orb.length === 1 ? '' : 's'}
         </div>`;
     });
     orbitHtml = orbitHtml
@@ -118,8 +118,8 @@ export default {
         obrigatórias <b>não ultrapassa grau 2 em nenhuma casa</b>.
         <br><br>
         As arestas obrigatórias saem dos 4 cantos (grau 2 no grafo do cavalo).
-        Isso deixa 8 casas vizinhas de canto — como <code>(1,2)</code> e
-        <code>(2,1)</code> — já com grau 1. Qualquer loop que <em>passe por
+        Isso deixa 8 casas vizinhas de canto (como <code>(1,2)</code> e
+        <code>(2,1)</code>) já com grau 1. Qualquer loop que <em>passe por
         uma dessas 8 casas</em> causaria grau 3 ali: <b>inválido</b>.
         <br><br>
         Os loops que satisfazem são os que <b>evitam completamente essas

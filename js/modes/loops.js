@@ -1,4 +1,4 @@
-// Modo "Loops" — anima um ciclo fundamental por vez.
+// Modo "Loops": anima um ciclo fundamental por vez.
 
 const state = {
   idx: 0,
@@ -12,7 +12,7 @@ export default {
   label: 'Loops',
   note: `
     <b>O que é um loop?</b> Um caminho que sai de uma casa e volta a ela
-    sem repetir passos — formando um círculo fechado.
+    sem repetir passos, formando um círculo fechado.
     O grafo do cavalo 8×8 tem <b>105 loops básicos</b>, chamados de
     "ciclos fundamentais". Todos os outros loops possíveis são combinações destes.
     <br><br>
@@ -84,10 +84,10 @@ export default {
     const coll = loop.colisao
       ? `(${loop.colisao[0][0]},${loop.colisao[0][1]}) ↔ ` +
         `(${loop.colisao[1][0]},${loop.colisao[1][1]})`
-      : '—';
+      : '-';
     const sz = document.getElementById('lp-size');
     const cl = document.getElementById('lp-coll');
-    if (sz) sz.textContent = `${loop.tamanho_ciclo || '—'} passos`;
+    if (sz) sz.textContent = `${loop.tamanho_ciclo || '-'} passos`;
     if (cl) cl.textContent = coll;
   },
 
@@ -100,12 +100,12 @@ export default {
     const coll = loop.colisao
       ? `(${loop.colisao[0][0]},${loop.colisao[0][1]}) ↔ ` +
         `(${loop.colisao[1][0]},${loop.colisao[1][1]})`
-      : '—';
+      : '-';
     document.getElementById('mode-panel').innerHTML = `
       <h2>Loop atual</h2>
       <div class="stat">
         <span class="stat-label">Tamanho do ciclo</span>
-        <span class="stat-value" id="lp-size">${loop.tamanho_ciclo || '—'} passos</span>
+        <span class="stat-value" id="lp-size">${loop.tamanho_ciclo || '-'} passos</span>
       </div>
       <div class="stat">
         <span class="stat-label">Colisão</span>

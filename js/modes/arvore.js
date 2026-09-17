@@ -1,4 +1,4 @@
-// Modo "Árvore" — descobre casas por BFS passo a passo.
+// Modo "Árvore": descobre casas por BFS passo a passo.
 import { levelColor } from '../core.js';
 
 const state = {
@@ -11,13 +11,13 @@ export default {
   key: 'arvore',
   label: 'Árvore',
   note: `
-    <b>BFS — busca em largura.</b> Começando na casa raiz, descobrimos
+    <b>BFS, busca em largura.</b> Começando na casa raiz, descobrimos
     primeiro os vizinhos diretos (nível 1), depois os vizinhos dos vizinhos
     (nível 2), e assim por diante.
     <br><br>
     Isso gera uma <b>árvore geradora</b>: 63 arestas que conectam todas as
     64 casas sem formar nenhum ciclo.
-    As outras <b>105 arestas</b> do grafo ficam de fora — cada uma delas
+    As outras <b>105 arestas</b> do grafo ficam de fora, e cada uma delas
     "fecha" um loop fundamental. A cor de cada casa indica sua distância
     da raiz (azul = perto, amarelo = longe).
   `,
@@ -100,9 +100,9 @@ export default {
     const { DATA } = app;
     const total = DATA.arvore.nos.length;
     document.getElementById('s-p').textContent = `${state.step + 1}/${total}`;
-    document.getElementById('s-active').textContent = '—';
+    document.getElementById('s-active').textContent = '-';
     const n = DATA.arvore.nos[state.step];
-    const paiStr = n.pai ? `(${n.pai[0]},${n.pai[1]})` : '— (raiz)';
+    const paiStr = n.pai ? `(${n.pai[0]},${n.pai[1]})` : '(raiz)';
     document.getElementById('mode-panel').innerHTML = `
       <h2>BFS a partir de (${DATA.arvore.raiz.join(',')})</h2>
       <div class="stat">

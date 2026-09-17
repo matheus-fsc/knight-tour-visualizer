@@ -1,4 +1,4 @@
-// Modo "Hierarquia" — mesma árvore BFS, mas em visualização abstrata (níveis verticais).
+// Modo "Hierarquia": mesma árvore BFS, mas em visualização abstrata (níveis verticais).
 import { levelColor } from '../core.js';
 
 function layoutTree(DATA) {
@@ -44,7 +44,7 @@ export default {
     <b>Mesma árvore do modo anterior, vista de cima.</b>
     Os círculos são as 64 casas dispostas por <b>nível</b> (distância da raiz).
     As linhas verdes são as 63 arestas da árvore geradora.
-    As curvas laranjas são as 105 arestas "extras" — cada uma fecha um loop
+    As curvas laranjas são as 105 arestas "extras": cada uma fecha um loop
     fundamental ao conectar dois galhos diferentes da árvore.
   `,
 
@@ -62,7 +62,7 @@ export default {
     const px = (k) => padX + (x[k] / totalW) * drawW;
     const py = (k) => padYtop + (y[k] / Math.max(1, numLevels - 1)) * drawH;
 
-    // Arestas fora da árvore — curvas suaves (105 loops)
+    // Arestas fora da árvore: curvas suaves (105 loops)
     ctx.strokeStyle = 'rgba(255, 160, 80, 0.10)';
     ctx.lineWidth = 1;
     for (const [a, b] of DATA.arvore.arestas_fora) {
@@ -102,15 +102,15 @@ export default {
 
     // Legenda
     board.legend([
-      { color: '#5ad06b', text: '— árvore (63)' },
+      { color: '#5ad06b', text: '─ árvore (63)' },
       { color: 'rgba(255,180,110,.85)', text: '⌢ fora da árvore (105)' },
     ], { y: H - 40, lineHeight: 16 });
   },
 
   renderPanel(app) {
     const { DATA } = app;
-    document.getElementById('s-p').textContent = '—/—';
-    document.getElementById('s-active').textContent = '—';
+    document.getElementById('s-p').textContent = '-/-';
+    document.getElementById('s-active').textContent = '-';
     const niveis = DATA.arvore.num_niveis;
     const contagem = new Array(niveis).fill(0);
     for (const n of DATA.arvore.nos) contagem[n.nivel]++;

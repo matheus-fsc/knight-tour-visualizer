@@ -1,4 +1,4 @@
-// Modo "Fusão GF(2)" — seleção interativa de loops; arestas sobrevivem por XOR (paridade).
+// Modo "Fusão GF(2)": seleção interativa de loops; arestas sobrevivem por XOR (paridade).
 
 const state = {
   active: new Set(),
@@ -18,7 +18,7 @@ export default {
     <br><br>
     Só aparecem as arestas tocadas por um <b>número ímpar</b> de loops ativos.
     Combinando os 105 loops certos, as arestas que sobram formam exatamente
-    o <b>passeio do cavalo</b> — é assim que a álgebra resolve o quebra-cabeça.
+    o <b>passeio do cavalo</b>. É assim que a álgebra resolve o quebra-cabeça.
   `,
 
   onEnter(app) {

@@ -1,4 +1,4 @@
-// Árvore BFS de loops — canvas lateral com os 105 loops agrupados por tipo.
+// Árvore BFS de loops: canvas lateral com os 105 loops agrupados por tipo.
 const LOOP_NODE_R = 6;
 
 export function createLoopTree(canvas, DATA, SIM) {
@@ -129,7 +129,7 @@ export function createLoopTree(canvas, DATA, SIM) {
       }
     }
 
-    // destaque (clique) — anel tracejado
+    // destaque (clique): anel tracejado
     if (state.highlightedLoop !== null && nodePos[state.highlightedLoop]) {
       const p = nodePos[state.highlightedLoop];
       ctx.strokeStyle = '#fff';

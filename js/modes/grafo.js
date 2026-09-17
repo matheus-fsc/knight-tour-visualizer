@@ -1,11 +1,11 @@
-// Modo "Grafo" — desenha todas as 168 arestas do tabuleiro.
+// Modo "Grafo": desenha todas as 168 arestas do tabuleiro.
 
 export default {
   key: 'grafo',
   label: 'Grafo',
   note: `
     <b>O que é isto?</b> O cavalo do xadrez se move em forma de L.
-    No tabuleiro 8×8, cada casa tem alguns vizinhos possíveis — ao todo
+    No tabuleiro 8×8, cada casa tem alguns vizinhos possíveis, ao todo
     são <b>168 ligações</b> (arestas).
     As linhas azuis mostram para onde o cavalo pode pular.
     O número dentro de cada círculo conta quantos vizinhos aquela casa tem:
@@ -24,8 +24,8 @@ export default {
 
   renderPanel(app) {
     const { DATA } = app;
-    document.getElementById('s-p').textContent = '—/—';
-    document.getElementById('s-active').textContent = '—';
+    document.getElementById('s-p').textContent = '-/-';
+    document.getElementById('s-active').textContent = '-';
     document.getElementById('mode-panel').innerHTML = `
       <h2>Graus por casa</h2>
       <div class="legend">

@@ -411,7 +411,7 @@ button.active {
   color: #7c7c92;
   border-top: 1px solid #1c1c28;
   padding-top: 10px;
-  margin-top: auto;
+  margin-top: 4px;
 }
 
 #ctx-note b { color: #a9a9bd; font-weight: 600; }
@@ -428,3 +428,138 @@ button.active {
 }
 
 #ctx-note .sep { color: #3a3a4a; margin: 0 4px; }
+
+/* ══════════════════════════════════════════════════════════════
+   Responsividade
+
+   O layout base é de três colunas lado a lado, pensado para telas
+   largas. Abaixo, ele degrada em etapas: primeiro a árvore de loops
+   quebra para a linha de baixo, depois o painel de informações, e por
+   fim tudo vira uma coluna só.
+   ══════════════════════════════════════════════════════════════ */
+
+body {
+  width: auto;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+#board-col,
+#info-col,
+#tree-col {
+  min-width: 0;
+}
+
+/* Larguras fixas de 560px/420px herdadas do layout desktop: viram teto,
+   nao piso, para nao estourar a viewport em telas estreitas. */
+#controls,
+.board-note {
+  width: 100%;
+  max-width: 560px;
+}
+
+#tree-controls {
+  max-width: 420px;
+  flex-wrap: wrap;
+}
+
+#board-col {
+  max-width: 100%;
+  flex: 0 0 auto;
+}
+
+/* O canvas é desenhado em coordenadas fixas e escalado por CSS.
+   O mapeamento de mouse já normaliza por rect.width, então o hover
+   continua correto em qualquer tamanho. */
+#canvas {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+}
+
+#tree-canvas {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  aspect-ratio: 420 / 460;
+}
+
+#ctx-note {
+  max-width: 560px;
+  width: 100%;
+}
+
+/* ── Até 1360px: a árvore de loops desce para a linha seguinte ── */
+
+@media (max-width: 1360px) {
+  #tree-col {
+    flex: 1 1 100%;
+    max-height: none;
+    border-right: 0;
+    border-top: 1px solid #1c1c28;
+  }
+}
+
+/* ── Até 1000px: o painel de informações desce também ─────────── */
+
+@media (max-width: 1000px) {
+  body {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #board-col {
+    /* empilhado, a coluna ocupa a largura toda e nao estica na vertical
+       (esticar abria um vao entre a nota e o painel de estatisticas) */
+    flex: 0 0 auto;
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid #1c1c28;
+  }
+
+  #info-col {
+    flex: 1 1 auto;
+    max-height: none;
+    overflow-y: visible;
+    border-right: 0;
+    border-bottom: 1px solid #1c1c28;
+  }
+
+  #tree-col {
+    border-top: 0;
+  }
+
+  /* Empilhado, a nota de contexto não precisa ser empurrada ao fim */
+  #ctx-note {
+    margin-top: 12px;
+  }
+}
+
+/* ── Até 620px: aperta o respiro e solta o tabuleiro ──────────── */
+
+@media (max-width: 620px) {
+  #board-col,
+  #tree-col {
+    padding: 12px;
+  }
+
+  #global-stats {
+    padding: 12px;
+  }
+
+  #canvas {
+    max-width: none;
+  }
+
+  #ctx-note {
+    max-width: none;
+    font-size: 11px;
+  }
+}
+
+/* ── Ponteiro grosso (toque): sem tooltip de hover ────────────── */
+
+@media (hover: none) {
+  #hover-tooltip { display: none !important; }
+}

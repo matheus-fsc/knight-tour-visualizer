@@ -1,4 +1,4 @@
-// Modo "Solução" — anima o algoritmo de Warnsdorff passo a passo.
+// Modo "Solução": anima o algoritmo de Warnsdorff passo a passo.
 
 const state = {
   step: 0,
@@ -13,7 +13,7 @@ export default {
     <b>Como o cavalo visita todas as 64 casas?</b>
     A heurística de <b>Warnsdorff</b> tem uma regra simples: a cada passo,
     escolha a casa com <b>menos saídas ainda disponíveis</b>. Isso evita
-    "becos sem saída" — casas que ficariam isoladas sem visita.
+    "becos sem saída": casas que ficariam isoladas sem visita.
     <br><br>
     Em verde, o caminho já percorrido. Em amarelo, a próxima casa escolhida.
     Em roxo tracejado, as alternativas que foram <b>rejeitadas</b> por terem
@@ -119,7 +119,7 @@ export default {
     const { DATA } = app;
     const total = DATA.solucao.passos.length;
     document.getElementById('s-p').textContent = `${state.step + 1}/${total}`;
-    document.getElementById('s-active').textContent = '—';
+    document.getElementById('s-active').textContent = '-';
     const st = DATA.solucao.passos[state.step];
     document.getElementById('mode-panel').innerHTML = `
       <h2>Warnsdorff</h2>
@@ -129,7 +129,7 @@ export default {
       </div>
       <div class="stat">
         <span class="stat-label">Saídas futuras</span>
-        <span class="stat-value">${st.grau_futuro ?? '—'}</span>
+        <span class="stat-value">${st.grau_futuro ?? '-'}</span>
       </div>
       <div class="panel-intro">
         Por que funciona? Escolher a casa mais "apertada" (menos saídas)
