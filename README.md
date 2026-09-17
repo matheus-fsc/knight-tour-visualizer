@@ -4,15 +4,18 @@ Frontend estático para inspecionar visualmente o **grafo do passeio do cavalo**
 a árvore geradora BFS, os ciclos fundamentais, as órbitas do grupo diedral D4 e
 o XOR de ciclos sobre GF(2).
 
-> Este repositório é a **parte visual** de um projeto maior. A pesquisa — o
-> invariante de deficit `Q(n)=3`, a formalização em Lean 4, os solvers e os
-> experimentos — está em **[KnightMove](https://github.com/matheus-fsc/KnightMove)**,
+**[Abrir o visualizador](https://matheus-fsc.github.io/knight-tour-visualizer/)**
+(roda no navegador, sem instalar nada).
+
+> Este repositório é a **parte visual** de um projeto maior. A pesquisa vive em
+> **[KnightMove](https://github.com/matheus-fsc/KnightMove)**: o invariante de
+> deficit `Q(n)=3`, a formalização em Lean 4, os solvers e os experimentos,
 > com a documentação completa na
 > **[wiki](https://github.com/matheus-fsc/KnightMove/wiki)**.
 
 ## Rodando
 
-Não precisa de build nem de servidor — é HTML estático:
+Não precisa de build nem de servidor, é HTML estático:
 
 ```bash
 xdg-open index.html      # ou cavalo_viz.html
@@ -61,3 +64,7 @@ Os scripts de busca puramente de pesquisa (`knight_8x8_allsat_async.py`,
 [KnightMove](https://github.com/matheus-fsc/KnightMove), em
 `experiments/05_solvers_xor/`, onde ficam junto do resto do trabalho com Z3 e
 cláusulas XOR. Permanecem no histórico deste repositório.
+
+## Licença
+
+MIT. Ver [LICENSE](LICENSE).
